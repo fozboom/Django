@@ -9,6 +9,8 @@ media
 /LR4/
 # Backup files # 
 *.bak 
+.idea
+.idea/*
 
 # If you are using PyCharm # 
 # User-specific stuff
