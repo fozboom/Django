@@ -1,0 +1,46 @@
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Your Cart</h1>
+
+    {% if cart.products.all %}
+    <ul>
+      {% for product_instance in cart.products.all %}
+      <li>
+            <a href="{% url 'product-detail' product_instance.product.id %}">{{ product_instance.product.name }}</a> (Quantity: {{ product_instance.quantity }}, Price: {{ product_instance.product.price }}, Total: <span id="total-price-{{ product_instance.id }}">{{ product_instance.total_price }}</span>)
+            <div style="display: flex;">
+                <form action="{% url 'increase-quantity' product_instance.id %}" method="post" class="quantity-form" data-product-instance-id="{{ product_instance.id }}">
+                    {% csrf_token %}
+                    <input type="submit" value="+">
+                </form>
+                <form action="{% url 'decrease-quantity' product_instance.id %}" method="post" class="quantity-form" data-product-instance-id="{{ product_instance.id }}">
+                    {% csrf_token %}
+                    <input type="submit" value="-">
+                </form>
+                <form action="{% url 'remove-from-cart' product_instance.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Удалить из корзины">
+                </form>
+            </div>
+      </li>
+      {% endfor %}
+    </ul>
+         <!-- Promo code form -->
+    <form action="{% url 'apply-promo-code' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="promo_code" placeholder="Enter promo code">
+        <input type="submit" value="Apply Promo Code">
+    </form>
+
+    <p>Total price: {{ cart.total_price }}</p>
+      <form method="post" action="{% url 'create-order' %}">
+        {% csrf_token %}
+        <h2>Select a pickup location:</h2>
+        {{ form.as_p }}
+        <button type="submit">Place order</button>
+      </form>
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+{% endblock %}
